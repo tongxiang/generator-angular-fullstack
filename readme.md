@@ -1,4 +1,4 @@
-##A [Generator-Angular-Fullstack](https://github.com/DaftMonk/generator-angular-fullstack) written by Tong Xiang for the students of Fullstack Academy. 
+##A [generator-angular-fullstack](https://github.com/DaftMonk/generator-angular-fullstack)workshop, written by Tong Xiang for the students of Fullstack Academy. 
 
 ##INTRODUCTION 
 So you’re now beginning to understand and master Mongo, Express, Angular, and Node. But instead of hacking together all these components before beginning the real work on your app, why not use a time-saving generator? Generators are either applications you can install which include a command-line tool that automatically creates the bare bones of a app (think of how we can use the `express newappname` command), or a public repo we can clone. 
@@ -102,7 +102,41 @@ Toggling *the final question* allows you to include not only the standard Passpo
 
 Once all your options are configured, the generator automatically runs the `npm install` and `bower install` commands. 
 
+##HIGH-LEVEL DIRECTORY STRUCTURE
+Open the directory you’ve created in Sublime. On the outermost layer, there are four large directories, along with a variety of configuration scripts and dotfiles. Which dotfiles are important? Some important ones below: 
+
+1. *.jshintrc* - [JSHint](http://www.jshint.com/docs/) is a module which is included in Grunt, and if you’ve set it to run in your Gruntfile (see below), then any time you run that specific Grunt command JSHint will check your Javascript for the red flags of poorly written code: variable names not written in camelCase, trailing whitespace, unused variables, inconsistent usage of quotation marks, among other things. **The `.jshintrc` file configures what JSHint looks for.**
+
+2. *.gitignore* - your `.gitignore` file allows you to specify which directories or files are ignored by Git--which directories and files aren’t tracked, committed, and pushed up to Github. 
+
+The important configuration scripts to pay attention to are: 
+
+1. *bower.json* - the package.json file for server-side dependencies and installed modules. All your installed angular packages will be listed here, and you can install more and save them in your bower.json file with the same syntax as with NPM: `bower install new-frontend-module --save`. 
+
+2. *Gruntfile.js* - this is the configuration file for [Grunt](http://gruntjs.com/), an automated task runner that bundles a lot of repetitive tasks together into consolidated commands. More on Grunt in the next section. 
+
+3. *Server.js* - this is the file which contains the boilerplate code creating our express server. **Additionally, note that if you require Mongo and Mongoose, this `server.js` file contains a “walk” function on line 19 - 24, which traverses the files in the `lib/models` directory to allow Express access to those models--you don’t need to require them at the top of the server file!**
+
+4. *karma.config.js* & *karma-e2e.conf.js* - These are both configuration files for two different use cases of [Karma](http://karma-runner.github.io/0.12/index.html)--unit testing and end-to-end testing--which is a Javascript test runner. More on Karma later in this tutorial. 
+
+
+Now, let’s talk about *directory structure*. Note that there are four high-level directories: `app`, `lib`, `node_modules`, and `test`. What’s included with each one? 
+
+1. `/app` - contains all our **front-end** Javascript. Note that this directory is organized in terms of Angular components--controllers, directives, services, as well as the `app.js` file which holds our main app-level angular module. Our front-end Bower packages, as well as image files, are also stored here. 
+
+2. `/lib` - contains all our **back-end** code, including our Express configuration as well as Mongoose, if you’ve installed it.
+
+3. `/node_modules` - contains all our node modules. Pretty simple. 
+
+4. `/test` - contains all our specs for testing, on both client and server sides. Note that tests are automatically generated for each new Angular module created using the generator. 
+
 ##WHAT NPM AND BOWER MODULES ARE ALWAYS INCLUDED? 
+
+Aside from the optional modules above which you could install, generator-angular-fullstack always includes other modules, which can be found in the `/lib` directory. Some of these provide additional Express middleware, now that Express 4.0 has spun off many Express 3.0 native functions into modules--[body-parser](https://github.com/expressjs/body-parser), [cookie-parser](https://github.com/expressjs/cookie-parser)--to give two examples. Others just provide useful functionality or utility libraries for your code--[ejs](http://embeddedjs.com/), [lodash](http://lodash.com/). There are also a variety of testing suites installed, which we’ll discuss later. But one of the most important NPM modules installed is Grunt. 
+
+*[Grunt](http://gruntjs.com/)* is an automated task runner that bundles a lot of repetitive tasks (running tests, starting your server, refreshing your server on change of files, for instance) and allows you to run them with a single “grunt” command. (Remember that in order to start our server, we run `grunt serve’, and that to generate and run a deployable version of our app we run `grunt:serve dist`.) Note that the tasks which Grunt runs are completely customizable by the user in the Gruntfile.js--open it now to see which Grunt commands run what in our application.
+
+Now take a look in `app/bower_components` to see what’s been installed. You’ll see a familiar cast of characters, like Angular, Bootstrap, and JQuery. 
 
 ###LAUNCHING YOUR SERVER
 
@@ -125,12 +159,6 @@ To launch your server in production mode, which automatically generates a `dist 
 {% terminal %}
 grunt serve:dist
 {% endterminal %}
-
-
-##SERVER-SIDE
-
-##CLIENT-SIDE 
-
 
 ##FRONTEND: YEOMAN ANGULAR GENERATORS
 Yeoman’s Angular generator provides us with a quite a few useful command line commands which automatically generate various Angular components. 
@@ -189,6 +217,12 @@ angular.module('tongTestApp')
 
 ##TESTING 
 
+As mentioned before, *generator-angular-fullstack* automatially creates test spec files for Angular components created using its command line tools. Additionally, we can run `grunt test` to run the client and server tests with Karma and Mocha, or specify client- or server- side tests with either `grunt test:server` or `grunt test: client`. Read more about how to write testing spec with Karma, Mocha, and a third testing utility included in generator-angular-fullstack--SuperTest--below. 
+
+1. [Karma](http://karma-runner.github.io/0.12/index.html) is a testing utility created by the developers of AngularJS, and provides great unit testing. (Especially of Angular modules!)
+2. [Mocha](http://visionmedia.github.io/mocha/) is another Javascript test framework which facilitates easy asynchronous testing--you can simulate asynchronous responses to your code pretty easily! 
+3. [Supertest](https://www.npmjs.org/package/supertest) provides an easy way for you to test the functionality of an HTTP server, and does so by keeping track of and mimicking requests and responses. 
+
 ##HEROKU DEPLOYMENT
 While the generator can easily deploy to either Openshift or Heroku, we’ll cover their simple Heroku deployment here. To push your app up to Heroku, run: 
 
@@ -228,15 +262,6 @@ $ cd dist
 $ git push yourAppName master
 $ git push heroku master
 {% endterminal %}
-
-QUESTIONS FOR NIMIT OR DAVID
-What exactly does the running the app in production mode with `grunt serve:dist` do? 
-what processes are run to create the dist file, aside from minification? 
-it’s about keeping your code more obfuscated, so it’s harder to reverse-engineer. 10% of it. 
-90% of it is about how quickly the browser loads files. But it’s way better to download a 100k file, then 10 10k files. 
-Collapsing all front-end scripts into one file. 
-Heroku deployment commands not working >>> is something missing? 
-https://devcenter.heroku.com/articles/git
 
 ##COMPILATION OF OTHER MEAN GENERATORS / BOILERPLATES
 As you gain more experience with the MEAN stack, you’ll begin to appreciate the need for additional functionality in your generator. Feel free to check out and use the following generators; I’ve put together a bit of information to help you compare and contrast them: 
